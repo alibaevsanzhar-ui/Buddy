@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy KZ — International Student Support</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel для JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [role, setRole] = useState('student');
+      const [activeTab, setActiveTab] = useState('dashboard');
+      const [matchedBuddy, setMatchedBuddy] = useState(null);
+      const [messages, setMessages] = useState([
+        { sender: 'buddy', text: 'Salem! Welcome to Kazakhstan! I am your mentor. Ask me anything about visa, transport, or classes.', time: '10:00' }
+      ]);
+      const [inputText, setInputText] = useState('');
+
+      const studentsData = [
+        { id: 'S101', name: 'Aarav Patel', country: 'India', major: 'General Medicine', gpa: 2.1, attendance: '68%', visaDays: 9, status: 'At Risk' },
+        { id: 'S102', name: 'Dilnoza Karimova', country: 'Uzbekistan', major: 'IT & Software', gpa: 3.4, attendance: '92%', visaDays: 45, status: 'Good' },
+        { id: 'S103', name: 'Li Wei', country: 'China', major: 'Cybersecurity', gpa: 2.4, attendance: '71%', visaDays: 12, status: 'At Risk' },
+        { id: 'S104', name: 'Mergen Amanov', country: 'Turkmenistan', major: 'Oil & Gas', gpa: 3.1, attendance: '88%', visaDays: 60, status: 'Good' },
+      ];
+
+      const buddies = [
+        { id: 1, name: 'Sanzhar A.', faculty: 'Cybersecurity / IT', year: '3rd Year', languages: 'English, Kazakh, Russian', city: 'Astana', rating: '4.9/5' },
+        { id: 2, name: 'Aruzhan M.', faculty: 'General Medicine', year: '4th Year', languages: 'English, Hindi basics, Kazakh', city: 'Astana / Semey', rating: '5.0/5' },
+        { id: 3, name: 'Daniyar K.', faculty: 'Software Engineering', year: '2nd Year', languages: 'English, Russian, Turkish', city: 'Almaty', rating: '4.8/5' },
+      ];
+
+      const handleSendMessage = () => {
+        if (!inputText.trim()) return;
+        const newMsg = { sender: 'student', text: inputText, time: 'Now' };
+        setMessages((prev) => [...prev, newMsg]);
+        setInputText('');
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            { sender: 'buddy', text: 'Got it! I can help you with that. Let me share the step-by-step info or meet after lectures.', time: 'Just now' }
+          ]);
+        }, 800);
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* Header */}
+          <header className="bg-indigo-900 text-white shadow-md">
+            <div className="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-xl shadow">🇰🇿</div>
+                <div>
+                  <h1 className="text-xl font-bold tracking-tight">Buddy KZ Platform</h1>
+                  <p className="text-xs text-indigo-200">International Student Adaptation & Early Warning System</p>
+                </div>
+              </div>
+              <div className="flex items-center bg-indigo-800/80 p-1.5 rounded-xl border border-indigo-700 text-sm">
+                <span className="text-xs text-indigo-300 mr-2 font-medium px-2">Role:</span>
+                <button
+                  onClick={() => setRole('student')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${role === 'student' ? 'bg-white text-indigo-900 shadow' : 'text-indigo-200 hover:text-white'}`}
+                >
+                  Student
+                </button>
+                <button
+                  onClick={() => setRole('mentor')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${role === 'mentor' ? 'bg-white text-indigo-900 shadow' : 'text-indigo-200 hover:text-white'}`}
+                >
+                  Senior Buddy
+                </button>
+                <button
+                  onClick={() => setRole('admin')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${role === 'admin' ? 'bg-white text-indigo-900 shadow' : 'text-indigo-200 hover:text-white'}`}
+                >
+                  International Office
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+            {/* Student View */}
+            {role === 'student' && (
+              <div className="space-y-6">
+                {/* Alert Card */}
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm flex items-start justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-amber-900">⚠️ Migration & Visa Notice</h3>
+                    <p className="text-xs text-amber-700 mt-1">Your temporary registration expires in <strong>12 days</strong>. Please visit the International Office (Room 214) with your passport.</p>
+                  </div>
+                  <span className="bg-amber-200 text-amber-900 text-xs px-2.5 py-1 rounded-full font-bold">Action Required</span>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* Left Column: Matcher & Chat */}
+                  <div className="md:col-span-2 space-y-6">
+                    {/* Mentor Matching */}
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-base font-bold text-slate-800">Your Assigned Senior Mentor (Buddy)</h2>
+                        <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-semibold">Matched</span>
+                      </div>
+                      
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">SA</div>
+                          <div>
+                            <h4 className="font-semibold text-slate-900">Sanzhar Alibayev</h4>
+                            <p className="text-xs text-slate-500">Cybersecurity • 3rd Year • EN / KZ / RU</p>
+                          </div>
+                        </div>
+                        <span className="text-xs font-semibold bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-200">★ 4.9 Rating</span>
+                      </div>
+
+                      {/* Chat Box */}
+                      <div className="mt-4 border border-slate-200 rounded-xl overflow-hidden flex flex-col h-64 bg-slate-50">
+                        <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 text-xs font-bold text-slate-600 flex justify-between">
+                          <span>Live Chat with Buddy</span>
+                          <span className="text-emerald-600">● Online</span>
+                        </div>
+                        <div className="flex-1 p-3 overflow-y-auto space-y-2 text-sm">
+                          {messages.map((m, idx) => (
+                            <div key={idx} className={`flex ${m.sender === 'student' ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`p-2.5 rounded-xl max-w-xs text-xs ${m.sender === 'student' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border text-slate-800 rounded-bl-none shadow-sm'}`}>
+                                {m.text}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="p-2 bg-white border-t border-slate-200 flex gap-2">
+                          <input
+                            type="text"
+                            value={inputText}
+                            onChange={(e) => setInputText(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                            placeholder="Ask about SIM-cards, buses, or dorms..."
+                            className="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-xs outline-none focus:border-indigo-600"
+                          />
+                          <button onClick={handleSendMessage} className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-1.5 rounded-lg font-medium">Send</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: City & Adaptation Guide */}
+                  <div className="space-y-4">
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                      <h3 className="font-bold text-slate-800 text-sm mb-3">📍 Kazakhstan Survival Guide</h3>
+                      <div className="space-y-3 text-xs">
+                        <div className="p-2.5 rounded-lg bg-indigo-50/60 border border-indigo-100">
+                          <div className="font-semibold text-indigo-900">Public Transport</div>
+                          <p className="text-slate-600 mt-0.5">Astana: download <strong>Avtobys / Astra</strong> card. Almaty: <strong>Onay</strong>. Fare is around 100–120 ₸.</p>
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100">
+                          <div className="font-semibold text-emerald-900">Budget Groceries</div>
+                          <p className="text-slate-600 mt-0.5">Visit local markets (Artem, Big Shanhai) or supermarkets like Magnum / Small for best prices.</p>
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-amber-50/60 border border-amber-100">
+                          <div className="font-semibold text-amber-900">IIN & Banking</div>
+                          <p className="text-slate-600 mt-0.5">Get your IIN at PSC (ЦОН) first to open a local bank card (Kaspi / Halyk) for QR payments.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-indigo-700 to-indigo-900 text-white p-5 rounded-2xl shadow-sm text-xs space-y-2">
+                      <h4 className="font-bold text-sm">Emergency Hotlines</h4>
+                      <p>🚑 Medical: <strong>103</strong></p>
+                      <p>🚓 Police: <strong>102</strong></p>
+                      <p>🏢 University 24/7 Dean Help: <strong>+7 (7172) 645-710</strong></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Senior Buddy View */}
+            {role === 'mentor' && (
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                  <h2 className="text-base font-bold text-slate-800 mb-4">Mentees Under Your Care</h2>
+                  <div className="grid md:grid-cols-2 gap-4 text-xs">
+                    <div className="p-4 border rounded-xl bg-slate-50 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-800 text-sm">Aarav Patel (1st Year)</span>
+                        <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">Needs Help</span>
+                      </div>
+                      <p className="text-slate-600">Major: General Medicine • From: India</p>
+                      <p className="text-slate-500">Note: Needs guidance finding Halal/Vegetarian groceries and opening Kaspi card.</p>
+                      <button className="w-full mt-2 bg-indigo-600 text-white py-1.5 rounded-lg font-medium">Schedule 1-on-1 Meeting</button>
+                    </div>
+                    <div className="p-4 border rounded-xl bg-slate-50 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-800 text-sm">Li Wei (1st Year)</span>
+                        <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold">Adapted</span>
+                      </div>
+                      <p className="text-slate-600">Major: Cybersecurity • From: China</p>
+                      <p className="text-slate-500">Note: Attended cultural city tour. Academic progress stable.</p>
+                      <button className="w-full mt-2 bg-slate-200 text-slate-700 py-1.5 rounded-lg font-medium">View Progress Log</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* International Office View */}
+            {role === 'admin' && (
+              <div className="space-y-6">
+                {/* Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white p-4 rounded-xl border border-slate-200">
+                    <div className="text-xs text-slate-500 font-medium">Foreign Students (KZ Total)</div>
+                    <div className="text-2xl font-bold text-indigo-900 mt-1">35,000+</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">National stat 2024-2025</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-slate-200">
+                    <div className="text-xs text-slate-500 font-medium">Expulsions Prevented</div>
+                    <div className="text-2xl font-bold text-emerald-600 mt-1">94.2%</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">Via early warnings</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-slate-200">
+                    <div className="text-xs text-slate-500 font-medium">Visa Expirations &lt; 15d</div>
+                    <div className="text-2xl font-bold text-rose-600 mt-1">14</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">Critical notifications sent</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-slate-200">
+                    <div className="text-xs text-slate-500 font-medium">Active Peer Buddies</div>
+                    <div className="text-2xl font-bold text-slate-800 mt-1">86</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">Senior students assigned</div>
+                  </div>
+                </div>
+
+                {/* Registry Table */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                  <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm">Predictive Early-Warning Monitoring Table</h3>
+                      <p className="text-xs text-slate-500">Cross-checks LMS attendance, dean records, and migration passport deadlines</p>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-left">
+                      <thead className="bg-slate-50 text-slate-500 uppercase font-semibold border-b">
+                        <tr>
+                          <th className="px-4 py-3">Student Name</th>
+                          <th className="px-4 py-3">Country</th>
+                          <th className="px-4 py-3">Major</th>
+                          <th className="px-4 py-3">GPA</th>
+                          <th className="px-4 py-3">Attendance</th>
+                          <th className="px-4 py-3">Visa Status</th>
+                          <th className="px-4 py-3">Risk Level</th>
+                          <th className="px-4 py-3">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {studentsData.map((s) => (
+                          <tr key={s.id} className="hover:bg-slate-50">
+                            <td className="px-4 py-3 font-semibold text-slate-900">{s.name}</td>
+                            <td className="px-4 py-3">{s.country}</td>
+                            <td className="px-4 py-3">{s.major}</td>
+                            <td className="px-4 py-3 font-medium">{s.gpa}</td>
+                            <td className="px-4 py-3">{s.attendance}</td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-0.5 rounded font-bold ${s.visaDays < 15 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700'}`}>
+                                {s.visaDays} days left
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${s.status === 'At Risk' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                                {s.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <button className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded">Alert Mentor</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+            Buddy Platform • Developed for ICT Assignment 1 (AITU / KZ Universities)
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
